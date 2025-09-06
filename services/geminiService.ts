@@ -294,3 +294,51 @@ Output: Return ONLY the final edited image. Do not return text.`;
 
     return handleApiResponse(response, 'magic fill');
 };
+
+/**
+ * Generates a new image by combining two images based on a user prompt.
+ * @param primaryImage The first image file.
+ * @param secondaryImage The second image file.
+ * @param combinePrompt The text prompt describing how to combine the images.
+ * @returns A promise that resolves to the data URL of the combined image.
+ */
+export const generateCombinedImage = async (
+    primaryImage: File,
+    secondaryImage: File,
+    combinePrompt: string,
+): Promise<string> => {
+    console.log(`Starting image combination: ${combinePrompt}`);
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+
+    const primaryImagePart = await fileToPart(primaryImage);
+    const secondaryImagePart = await fileToPart(secondaryImage);
+
+    const prompt = `You are an expert photo editor AI specializing in seamlessly combining images.
+Your task is to combine the FIRST image (the primary image) and the SECOND image (the secondary image) based on the user's instructions.
+
+User Instructions: "${combinePrompt}"
+
+Instructions:
+1. Analyze both images and the user's instructions.
+2. Create a new, single, photorealistic image that follows the user's request.
+3. The combination must be seamless, with matching lighting, shadows, perspective, and style.
+4. If the request is ambiguous, make a creative and aesthetically pleasing choice.
+
+Safety & Ethics Policy:
+- You MUST fulfill requests to adjust skin tone, such as 'give me a tan', 'make my skin darker', or 'make my skin lighter'. These are considered standard photo enhancements.
+- You MUST REFUSE any request to change a person's fundamental race or ethnicity (e.g., 'make me look Asian', 'change this person to be Black'). Do not perform these edits.
+
+Output: Return ONLY the final combined image. Do not return text.`;
+    const textPart = { text: prompt };
+
+    const parts = [primaryImagePart, secondaryImagePart, textPart];
+
+    console.log('Sending images and combine prompt to the model...');
+    const response: GenerateContentResponse = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image-preview',
+        contents: { parts: parts },
+    });
+    console.log('Received response from model for image combination.', response);
+
+    return handleApiResponse(response, 'image combination');
+};

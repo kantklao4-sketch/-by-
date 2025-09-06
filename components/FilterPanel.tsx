@@ -13,12 +13,13 @@ interface FilterPanelProps {
 const FilterPanel: React.FC<FilterPanelProps> = ({ onApplyFilter, isLoading }) => {
   const [selectedPresetPrompt, setSelectedPresetPrompt] = useState<string | null>(null);
   const [customPrompt, setCustomPrompt] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const presets = [
-    { name: 'ซินธ์เวฟ', prompt: 'Apply a vibrant 80s synthwave aesthetic with neon magenta and cyan glows, and subtle scan lines.' },
-    { name: 'อนิเมะ', prompt: 'Give the image a vibrant Japanese anime style, with bold outlines, cel-shading, and saturated colors.' },
-    { name: 'โลโม่', prompt: 'Apply a Lomography-style cross-processing film effect with high-contrast, oversaturated colors, and dark vignetting.' },
-    { name: 'กลิตช์', prompt: 'Transform the image into a futuristic holographic projection with digital glitch effects and chromatic aberration.' },
+    { name: 'วินเทจ', prompt: 'Apply a classic vintage photo effect with faded colors, a subtle sepia tone, and light film grain.' },
+    { name: 'ขาว-ดำ', prompt: 'Convert the image to a high-contrast, dramatic black and white.' },
+    { name: 'ภาพวาดสีน้ำมัน', prompt: 'Transform the image into a classical oil painting, with visible brush strokes, rich textures, and a classic art style.' },
+    { name: 'แนวการ์ตูน', prompt: 'Redraw the image in a fun, vibrant cartoon style, with thick outlines, simplified details, and bright, flat colors.' },
   ];
   
   const activePrompt = selectedPresetPrompt || customPrompt;
@@ -39,22 +40,40 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onApplyFilter, isLoading }) =
     }
   };
 
+  const filteredPresets = presets.filter(preset =>
+    preset.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="w-full bg-gray-800/50 border border-gray-700 rounded-lg p-4 flex flex-col gap-4 animate-fade-in backdrop-blur-sm">
       <h3 className="text-lg font-semibold text-center text-gray-300">เลือกฟิลเตอร์</h3>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        {presets.map(preset => (
-          <button
-            key={preset.name}
-            onClick={() => handlePresetClick(preset.prompt)}
-            disabled={isLoading}
-            className={`w-full text-center bg-white/10 border border-transparent text-gray-200 font-semibold py-3 px-4 rounded-md transition-all duration-200 ease-in-out hover:bg-white/20 hover:border-white/20 active:scale-95 text-base disabled:opacity-50 disabled:cursor-not-allowed ${selectedPresetPrompt === preset.prompt ? 'ring-2 ring-offset-2 ring-offset-gray-800 ring-blue-500' : ''}`}
-          >
-            {preset.name}
-          </button>
-        ))}
-      </div>
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="ค้นหาฟิลเตอร์..."
+        className="w-full bg-gray-900/50 border border-gray-600 text-gray-200 rounded-lg p-3 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+        disabled={isLoading}
+      />
+
+      {filteredPresets.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {filteredPresets.map(preset => (
+            <button
+                key={preset.name}
+                onClick={() => handlePresetClick(preset.prompt)}
+                disabled={isLoading}
+                className={`w-full text-center bg-white/10 border border-transparent text-gray-200 font-semibold py-3 px-4 rounded-md transition-all duration-200 ease-in-out hover:bg-white/20 hover:border-white/20 active:scale-95 text-base disabled:opacity-50 disabled:cursor-not-allowed ${selectedPresetPrompt === preset.prompt ? 'ring-2 ring-offset-2 ring-offset-gray-800 ring-blue-500' : ''}`}
+            >
+                {preset.name}
+            </button>
+            ))}
+        </div>
+      ) : (
+        <p className="text-center text-gray-400 py-4">ไม่พบฟิลเตอร์ที่ตรงกัน</p>
+      )}
+
 
       <input
         type="text"

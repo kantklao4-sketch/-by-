@@ -77,41 +77,52 @@ const AdjustmentPanel: React.FC<AdjustmentPanelProps> = ({ onApplyAdjustment, is
           </button>
         ))}
       </div>
-      
-      <div className="w-full bg-gray-900/40 border border-gray-700/60 rounded-lg p-3">
-        <h4 className="text-base font-semibold text-center text-gray-300 mb-3">ใช้ภาพอ้างอิง (ไม่บังคับ)</h4>
-        {secondaryImageUrl ? (
-          <div className="flex items-center gap-3 p-2 bg-white/5 rounded-md">
-            <img src={secondaryImageUrl} alt="Reference" className="w-14 h-14 object-cover rounded-md flex-shrink-0" />
-            <div className="flex-grow overflow-hidden">
-              <p className="text-sm font-medium text-gray-200 truncate">{secondaryImage?.name}</p>
-              <p className="text-xs text-gray-400">{secondaryImage && `${(secondaryImage.size / 1024).toFixed(1)} KB`}</p>
-            </div>
-            <button
-              onClick={onClearSecondaryImage}
-              disabled={isLoading}
-              className="text-sm font-semibold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-3 py-2 rounded-md transition-colors disabled:opacity-50"
-            >
-              ลบ
-            </button>
-          </div>
-        ) : (
-          <label htmlFor="ref-image-upload" className="relative flex items-center justify-center w-full px-4 py-4 text-sm font-semibold text-gray-300 bg-white/5 rounded-md cursor-pointer group hover:bg-white/10 transition-colors border-2 border-dashed border-gray-600 hover:border-gray-500">
-            <UploadIcon className="w-5 h-5 mr-2" />
-            อัปโหลดภาพอ้างอิง
-            <input id="ref-image-upload" type="file" className="hidden" accept="image/*" onChange={handleFileChange} disabled={isLoading} />
-          </label>
-        )}
+
+      <div className="relative flex items-center my-2">
+        <div className="flex-grow border-t border-gray-600/50"></div>
+        <span className="flex-shrink mx-4 text-gray-400 text-sm">หรือปรับแต่งด้วยตัวเอง</span>
+        <div className="flex-grow border-t border-gray-600/50"></div>
       </div>
 
-      <input
-        type="text"
-        value={customPrompt}
-        onChange={handleCustomChange}
-        placeholder="หรืออธิบายการปรับแต่ง (เช่น 'เปลี่ยนพื้นหลังเป็นป่า')"
-        className="flex-grow bg-gray-800 border border-gray-600 text-gray-200 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 focus:outline-none transition w-full disabled:cursor-not-allowed disabled:opacity-60 text-base"
-        disabled={isLoading}
-      />
+      <div className="flex flex-col gap-4">
+        <input
+            type="text"
+            value={customPrompt}
+            onChange={handleCustomChange}
+            placeholder="อธิบายการปรับแต่ง (เช่น 'เปลี่ยนพื้นหลังเป็นป่า')"
+            className="flex-grow bg-gray-800 border border-gray-600 text-gray-200 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 focus:outline-none transition w-full disabled:cursor-not-allowed disabled:opacity-60 text-base"
+            disabled={isLoading}
+        />
+        
+        <div className="w-full bg-gray-900/40 border border-gray-700/60 rounded-lg p-3">
+            <h4 className="text-base font-semibold text-center text-gray-300 mb-3">
+                เพิ่มภาพอ้างอิงเพื่อคัดลอกสไตล์ (ไม่บังคับ)
+            </h4>
+            {secondaryImageUrl ? (
+            <div className="flex items-center gap-3 p-2 bg-white/5 rounded-md">
+                <img src={secondaryImageUrl} alt="Reference" className="w-14 h-14 object-cover rounded-md flex-shrink-0" />
+                <div className="flex-grow overflow-hidden">
+                <p className="text-sm font-medium text-gray-200 truncate">{secondaryImage?.name}</p>
+                <p className="text-xs text-gray-400">{secondaryImage && `${(secondaryImage.size / 1024).toFixed(1)} KB`}</p>
+                </div>
+                <button
+                onClick={onClearSecondaryImage}
+                disabled={isLoading}
+                className="text-sm font-semibold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-3 py-2 rounded-md transition-colors disabled:opacity-50"
+                >
+                ลบ
+                </button>
+            </div>
+            ) : (
+            <label htmlFor="ref-image-upload" className="relative flex items-center justify-center w-full px-4 py-4 text-sm font-semibold text-gray-300 bg-white/5 rounded-md cursor-pointer group hover:bg-white/10 transition-colors border-2 border-dashed border-gray-600 hover:border-gray-500">
+                <UploadIcon className="w-5 h-5 mr-2" />
+                อัปโหลดภาพอ้างอิง
+                <input id="ref-image-upload" type="file" className="hidden" accept="image/*" onChange={handleFileChange} disabled={isLoading} />
+            </label>
+            )}
+        </div>
+      </div>
+
 
       {(activePrompt || secondaryImage) && (
         <div className="animate-fade-in flex flex-col gap-4 pt-2">
